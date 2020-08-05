@@ -1,0 +1,39 @@
+###
+POST localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "naruto@namutip.mauel",
+  "password": "naruto"
+}
+
+###
+GET localhost:8080/users?page=1&size=2
+
+###
+POST localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "password": "password"
+}
+
+
+###
+POST http://localhost:8080/posts/2
+Content-Type: application/json
+
+###
+POST localhost:8080/posts
+Content-Type: application/json
+
+{
+  "title": "jjj0612",
+  "content": "password"
+}
+
+###
+GET http://localhost:8080/posts/2
+
+###
+GET http://localhost:8080/posts

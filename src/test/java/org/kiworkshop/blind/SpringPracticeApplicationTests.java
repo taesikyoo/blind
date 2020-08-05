@@ -1,4 +1,4 @@
-package org.backend.master.springpractice;
+package org.backend.springpractice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,5 +9,4 @@ class SpringPracticeApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
