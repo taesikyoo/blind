@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.kiworkshop.blind.comment.domain.Comment;
 import org.kiworkshop.blind.like.LikeAction;
 import org.kiworkshop.blind.user.domain.User;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,6 +33,9 @@ public class Post {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     private List<LikeAction> likes = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
 
     @CreatedDate
     private LocalDateTime createdAt;
