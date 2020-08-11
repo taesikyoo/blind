@@ -9,6 +9,7 @@ import org.kiworkshop.blind.like.LikeAction;
 import org.kiworkshop.blind.user.domain.User;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @ToString
 @NoArgsConstructor
@@ -48,11 +50,12 @@ public class Post {
         Assert.hasLength(content, "content should not be empty");
         this.title = title;
         this.content = content;
+        this.author = author;
     }
 
     public void update(Post postToUpdate) {
-        this.title = postToUpdate.title;
-        this.content = postToUpdate.content;
+        this.title = postToUpdate.getTitle();
+        this.content = postToUpdate.getContent();
     }
 
     public void addLike(User user) {

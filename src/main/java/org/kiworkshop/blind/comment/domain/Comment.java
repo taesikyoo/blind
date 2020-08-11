@@ -7,10 +7,12 @@ import org.kiworkshop.blind.post.domain.Post;
 import org.kiworkshop.blind.user.domain.User;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor
 @Entity
@@ -38,12 +40,9 @@ public class Comment {
         this.content = content;
         this.author = author;
         this.post = post;
-        this.createdAt = LocalDateTime.now();
-        this.lastUpdatedAt = LocalDateTime.now();
     }
 
     public void update(String content) {
         this.content = content;
-        this.lastUpdatedAt = LocalDateTime.now();
     }
 }

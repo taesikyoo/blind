@@ -2,6 +2,9 @@ package org.kiworkshop.blind.post.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.kiworkshop.blind.comment.controller.dto.CommentResponse;
+import org.kiworkshop.blind.comment.domain.Comment;
+import org.kiworkshop.blind.comment.util.NameTagExtractor;
 import org.kiworkshop.blind.like.LikeAction;
 import org.kiworkshop.blind.like.LikeResponse;
 import org.kiworkshop.blind.post.controller.PostRequestDto;
@@ -43,15 +46,37 @@ public class PostService {
 
     private PostResponseDto getPostResponseDto(Post post) {
         LikeResponse likeResponse = createLikeResponse(post.getLikes());
+        List<CommentResponse> commentResponseList = createCommentResponseList(post.getComments());
         return PostResponseDto.builder()
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())
             .authorName(post.getAuthor().getName())
+            .commentResponseList(commentResponseList)
             .likeResponse(likeResponse)
             .createdAt(post.getCreatedAt())
             .lastUpdatedAt(post.getLastUpdatedAt())
             .build();
+    }
+
+    private List<CommentResponse> createCommentResponseList(List<Comment> comments) {
+        return comments.stream()
+                .map(this::getCommentResponse)
+                .collect(Collectors.toList());
+    }
+
+    private CommentResponse getCommentResponse(Comment comment) {
+        List<String> nameTags = NameTagExtractor.extractNameTags(comment.getContent());
+
+        return CommentResponse.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .nameTags(nameTags)
+                .authorName(comment.getAuthor().getName())
+                .postId(comment.getPost().getId())
+                .createdAt(comment.getCreatedAt())
+                .lastUpdatedAt(comment.getLastUpdatedAt())
+                .build();
     }
 
     private LikeResponse createLikeResponse(List<LikeAction> likes) {
@@ -59,6 +84,7 @@ public class PostService {
         return new LikeResponse(likeUserNames);
     }
 
+    @Transactional
     public void updatePost(Long id, PostRequestDto postRequestDto) {
         Post post = findById(id);
         Post postToUpdate = postRequestDto.toEntity(null);
