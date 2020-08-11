@@ -12,12 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class CommentService {
+
+    private static final int DEFAULT_NUMBERS_OF_COMMENTS_TO_EXPOSE = 10;
 
     private final CommentRepository commentRepository;
 
@@ -33,6 +36,20 @@ public class CommentService {
 
         Comment saved = commentRepository.save(comment);
         return getCommentResponse(saved);
+    }
+
+    public List<CommentResponse> getOldest(Post post) {
+        List<Comment> comments = post.getComments();
+        List<CommentResponse> commentResponseList = new ArrayList<>();
+        int numberOfCommentsToExpose = Math.min(comments.size(), DEFAULT_NUMBERS_OF_COMMENTS_TO_EXPOSE);
+
+        for (int i = 0; i < numberOfCommentsToExpose; i++) {
+            Comment comment = comments.get(i);
+            CommentResponse response = getCommentResponse(comment);
+            commentResponseList.add(response);
+        }
+
+        return commentResponseList;
     }
 
     public List<CommentResponse> getAll(Post post) {

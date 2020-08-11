@@ -63,7 +63,13 @@ public class PostController {
     }
 
     @GetMapping("/{id}/comments")
-    public List<CommentResponse> getCommentsByPost(@PathVariable Long id) {
+    public List<CommentResponse> getOldestComments(@PathVariable Long id) {
+        Post post = postService.findById(id);
+        return commentService.getOldest(post);
+    }
+
+    @GetMapping("/{id}/comments/all")
+    public List<CommentResponse> getAllComments(@PathVariable Long id) {
         Post post = postService.findById(id);
         return commentService.getAll(post);
     }

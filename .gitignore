@@ -16,9 +16,6 @@ build/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea/**/sonarlint/
-/.idea/sonarlint/
-/.idea/sonarlint/index.pb
 .idea
 *.iws
 *.iml
