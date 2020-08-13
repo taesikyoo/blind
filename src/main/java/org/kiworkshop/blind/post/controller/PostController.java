@@ -62,15 +62,21 @@ public class PostController {
         return commentService.create(httpSession, post, request);
     }
 
-    @GetMapping("/{id}/comments")
-    public List<CommentResponse> getOldestComments(@PathVariable Long id) {
-        Post post = postService.findById(id);
-        return commentService.getOldest(post);
-    }
-
     @GetMapping("/{id}/comments/all")
     public List<CommentResponse> getAllComments(@PathVariable Long id) {
         Post post = postService.findById(id);
         return commentService.getAll(post);
+    }
+
+    @GetMapping("/{id}/comments/partial")
+    public List<CommentResponse> getPartialComments(@PathVariable Long id) {
+        Post post = postService.findById(id);
+        return commentService.getTopNComments(post);
+    }
+
+    @GetMapping("/{id}/comments/rest/{last-index}")
+    public List<CommentResponse> getRestComments(@PathVariable("id") Long id, @PathVariable("last-index") Long lastIndex) {
+        Post post = postService.findById(id);
+        return commentService.getAfterIdComments(post, lastIndex);
     }
 }

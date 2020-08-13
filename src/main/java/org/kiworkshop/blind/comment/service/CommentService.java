@@ -8,11 +8,11 @@ import org.kiworkshop.blind.comment.repository.CommentRepository;
 import org.kiworkshop.blind.comment.util.NameTagExtractor;
 import org.kiworkshop.blind.post.domain.Post;
 import org.kiworkshop.blind.user.domain.User;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 public class CommentService {
 
-    private static final int DEFAULT_NUMBERS_OF_COMMENTS_TO_EXPOSE = 10;
+    private static final int COMMENT_SIZE = 5;
 
     private final CommentRepository commentRepository;
 
@@ -34,20 +34,6 @@ public class CommentService {
 
         Comment saved = commentRepository.save(comment);
         return createCommentResponse(saved);
-    }
-
-    public List<CommentResponse> getOldest(Post post) {
-        List<Comment> comments = post.getComments();
-        List<CommentResponse> commentResponseList = new ArrayList<>();
-        int numberOfCommentsToExpose = Math.min(comments.size(), DEFAULT_NUMBERS_OF_COMMENTS_TO_EXPOSE);
-
-        for (int i = 0; i < numberOfCommentsToExpose; i++) {
-            Comment comment = comments.get(i);
-            CommentResponse response = createCommentResponse(comment);
-            commentResponseList.add(response);
-        }
-
-        return commentResponseList;
     }
 
     public List<CommentResponse> getAll(Post post) {
@@ -103,5 +89,19 @@ public class CommentService {
                 .createdAt(comment.getCreatedDate())
                 .lastUpdatedAt(comment.getLastModifiedDate())
                 .build();
+    }
+
+    public List<CommentResponse> getTopNComments(Post post) {
+        List<Comment> comments = commentRepository.findAllByPostOrderById(post, PageRequest.of(0, COMMENT_SIZE));
+        return comments.stream()
+                .map(this::createCommentResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<CommentResponse> getAfterIdComments(Post post, Long id) {
+        List<Comment> comments = commentRepository.findAllByPostAndIdGreaterThan(post, id);
+        return comments.stream()
+                .map(this::createCommentResponse)
+                .collect(Collectors.toList());
     }
 }
