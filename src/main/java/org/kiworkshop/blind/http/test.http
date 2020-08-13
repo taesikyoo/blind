@@ -3,8 +3,9 @@ POST localhost:8080/users
 Content-Type: application/json
 
 {
-  "email": "naruto@namutip.mauel2",
-  "password": "naruto2"
+  "email": "naruto@namutip.mauel",
+  "password": "naruto1",
+  "name" : "naruto"
 }
 
 ###
@@ -15,8 +16,8 @@ POST localhost:8080/users/login
 Content-Type: application/json
 
 {
-  "email": "naruto@namutip.mauel2",
-  "password": "naruto2"
+  "email": "naruto@namutip.mauel",
+  "password": "naruto1"
 }
 
 
@@ -67,7 +68,7 @@ PUT localhost:8080/comments/1/edit
 Content-Type: application/json
 
 {
-  "content": "수정되었습니다!"
+  "content": "수정되었습니다!!"
 }
 
 ###

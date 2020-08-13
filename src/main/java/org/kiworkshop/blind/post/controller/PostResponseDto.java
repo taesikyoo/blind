@@ -23,7 +23,7 @@ public class PostResponseDto {
     private LocalDateTime lastUpdatedAt;
 
     @Builder
-    public PostResponseDto(Long id, String title, String content, String authorName, LikeResponse likeResponse, List commentResponseList, LocalDateTime createdAt, LocalDateTime lastUpdatedAt) {
+    public PostResponseDto(Long id, String title, String content, String authorName, LikeResponse likeResponse, List<CommentResponse> commentResponseList, LocalDateTime createdAt, LocalDateTime lastUpdatedAt) {
         this.id = id;
         this.title = title;
         this.content = content;

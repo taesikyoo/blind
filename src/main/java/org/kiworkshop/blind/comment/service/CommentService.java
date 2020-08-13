@@ -25,17 +25,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public CommentResponse create(HttpSession session, Post post, CommentRequest request) {
-        User author = (User) session.getAttribute("LOGIN_USER");
         validateLoginUser(session);
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
-                .author(author)
                 .post(post)
                 .build();
 
         Comment saved = commentRepository.save(comment);
-        return getCommentResponse(saved);
+        return createCommentResponse(saved);
     }
 
     public List<CommentResponse> getOldest(Post post) {
@@ -45,7 +43,7 @@ public class CommentService {
 
         for (int i = 0; i < numberOfCommentsToExpose; i++) {
             Comment comment = comments.get(i);
-            CommentResponse response = getCommentResponse(comment);
+            CommentResponse response = createCommentResponse(comment);
             commentResponseList.add(response);
         }
 
@@ -54,7 +52,7 @@ public class CommentService {
 
     public List<CommentResponse> getAll(Post post) {
         return post.getComments().stream()
-                .map(this::getCommentResponse)
+                .map(this::createCommentResponse)
                 .collect(Collectors.toList());
     }
 
@@ -66,7 +64,7 @@ public class CommentService {
 
         comment.update(request.getContent());
 
-        return getCommentResponse(comment);
+        return createCommentResponse(comment);
     }
 
     public void delete(HttpSession httpSession, Long id) {
@@ -89,21 +87,21 @@ public class CommentService {
 
     private void validateCorrectUser(HttpSession httpSession, Comment comment) {
         User loginUser = (User) httpSession.getAttribute("LOGIN_USER");
-        User author = comment.getAuthor();
+        User author = comment.getCreatedBy();
         if (!(author.getId().equals(loginUser.getId()))) throw new IllegalArgumentException("사용자 권한이 없습니다.");
     }
 
-    private CommentResponse getCommentResponse(Comment comment) {
+    private CommentResponse createCommentResponse(Comment comment) {
         List<String> nameTags = NameTagExtractor.extractNameTags(comment.getContent());
 
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .nameTags(nameTags)
-                .authorName(comment.getAuthor().getName())
+                .authorName(comment.getCreatedBy().getName())
                 .postId(comment.getPost().getId())
-                .createdAt(comment.getCreatedAt())
-                .lastUpdatedAt(comment.getLastUpdatedAt())
+                .createdAt(comment.getCreatedDate())
+                .lastUpdatedAt(comment.getLastModifiedDate())
                 .build();
     }
 }

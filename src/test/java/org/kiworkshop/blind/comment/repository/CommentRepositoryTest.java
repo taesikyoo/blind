@@ -54,9 +54,9 @@ class CommentRepositoryTest {
         //then
         Comment comment = commentsList.get(0);
 
-        System.out.println(">>>>>>>>> createDate=" + comment.getCreatedAt() + ", modifiedDate=" + comment.getLastUpdatedAt());
+        System.out.println(">>>>>>>>> createDate=" + comment.getCreatedDate() + ", modifiedDate=" + comment.getLastModifiedDate());
 
-        assertThat(comment.getCreatedAt()).isAfter(now);
-        assertThat(comment.getLastUpdatedAt()).isAfter(now);
+        assertThat(comment.getCreatedDate()).isAfter(now);
+        assertThat(comment.getLastModifiedDate()).isAfter(now);
     }
 }

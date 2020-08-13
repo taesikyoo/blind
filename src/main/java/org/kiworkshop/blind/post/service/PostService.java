@@ -26,22 +26,27 @@ public class PostService {
 
     private final PostRepository postRepository;
 
+    public Long createPost(HttpSession session, PostRequestDto postRequestDto) {
+        Post post = postRequestDto.toEntity();
+        return postRepository.save(post).getId();
+    }
+
     public List<PostResponseDto> readAll() {
         return postRepository.findAll().stream()
             .map(this::getPostResponseDto)
             .collect(Collectors.toList());
     }
 
-    public Long createPost(HttpSession session, PostRequestDto postRequestDto) {
-        User author = (User) session.getAttribute("LOGIN_USER");
-        Post post = postRequestDto.toEntity(author);
-        return postRepository.save(post).getId();
-    }
-
     @Transactional(readOnly = true)
     public PostResponseDto readPost(Long id) {
         Post post = findById(id);
         return getPostResponseDto(post);
+    }
+
+    public Post findById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 post입니다."));
+        return post;
     }
 
     private PostResponseDto getPostResponseDto(Post post) {
@@ -51,31 +56,31 @@ public class PostService {
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())
-            .authorName(post.getAuthor().getName())
+            .authorName(post.getCreatedBy().getName())
             .commentResponseList(commentResponseList)
             .likeResponse(likeResponse)
-            .createdAt(post.getCreatedAt())
-            .lastUpdatedAt(post.getLastUpdatedAt())
+            .createdAt(post.getCreatedDate())
+            .lastUpdatedAt(post.getLastModifiedDate())
             .build();
     }
 
     private List<CommentResponse> createCommentResponseList(List<Comment> comments) {
         return comments.stream()
-                .map(this::getCommentResponse)
+                .map(this::createCommentResponse)
                 .collect(Collectors.toList());
     }
 
-    private CommentResponse getCommentResponse(Comment comment) {
+    private CommentResponse createCommentResponse(Comment comment) {
         List<String> nameTags = NameTagExtractor.extractNameTags(comment.getContent());
 
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .nameTags(nameTags)
-                .authorName(comment.getAuthor().getName())
+                .authorName(comment.getCreatedBy().getName())
                 .postId(comment.getPost().getId())
-                .createdAt(comment.getCreatedAt())
-                .lastUpdatedAt(comment.getLastUpdatedAt())
+                .createdAt(comment.getCreatedDate())
+                .lastUpdatedAt(comment.getLastModifiedDate())
                 .build();
     }
 
@@ -87,19 +92,13 @@ public class PostService {
     @Transactional
     public void updatePost(Long id, PostRequestDto postRequestDto) {
         Post post = findById(id);
-        Post postToUpdate = postRequestDto.toEntity(null);
+        Post postToUpdate = postRequestDto.toEntity();
         post.update(postToUpdate);
         postRepository.save(post);
     }
 
     public void deletePost(Long id) {
         postRepository.deleteById(id);
-    }
-
-    public Post findById(Long id) {
-        Post post = postRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 post입니다."));
-        return post;
     }
 
     @Transactional
