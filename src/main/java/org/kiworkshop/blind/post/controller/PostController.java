@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.kiworkshop.blind.comment.controller.dto.CommentRequest;
 import org.kiworkshop.blind.comment.controller.dto.CommentResponse;
 import org.kiworkshop.blind.comment.service.CommentService;
+import org.kiworkshop.blind.post.controller.dto.PostPageRequest;
 import org.kiworkshop.blind.post.domain.Post;
 import org.kiworkshop.blind.post.service.PostService;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,8 @@ public class PostController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<PostResponseDto>> getAll() {
-        return ResponseEntity.ok(postService.readAll());
+    public ResponseEntity<List<PostResponseDto>> getAll(PostPageRequest postPageRequest) {
+        return ResponseEntity.ok(postService.readAll(postPageRequest.getPageable()));
     }
 
     @PostMapping

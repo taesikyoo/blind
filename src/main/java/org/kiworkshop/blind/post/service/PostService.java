@@ -12,6 +12,7 @@ import org.kiworkshop.blind.post.controller.PostResponseDto;
 import org.kiworkshop.blind.post.domain.Post;
 import org.kiworkshop.blind.post.repository.PostRepository;
 import org.kiworkshop.blind.user.domain.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +32,8 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
-    public List<PostResponseDto> readAll() {
-        return postRepository.findAll().stream()
+    public List<PostResponseDto> readAll(Pageable pageable) {
+        return postRepository.findAll(pageable).stream()
             .map(this::getPostResponseDto)
             .collect(Collectors.toList());
     }
